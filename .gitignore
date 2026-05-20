@@ -242,6 +242,7 @@ __marimo__/
 
 # RStudio files
 .Rproj.user/
+*.Rproj
 
 # produced vignettes
 vignettes/*.html
