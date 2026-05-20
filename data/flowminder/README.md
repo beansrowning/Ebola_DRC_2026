@@ -1,1 +1,0 @@
-This directory contains mobility estimates produced by Flowminder from data accessed via partnership with Vodacom RDC. It contains monthly mobility reports between health zones by province and the underlying data extracted form the reports and arranged to be machine readable.
