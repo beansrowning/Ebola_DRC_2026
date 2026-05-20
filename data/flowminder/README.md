@@ -2,7 +2,7 @@
 
 This directory contains monthly reports and the extracted data from Flowminder mobility/population displacement estimates, produced from Vodacom RDC CDR data.
 
-![outflows_plot]([Ebola_DRC_2026/data/flowminder/mobilite_flow_map_outflow_mar2026_zoom.png](https://github.com/kraemer-lab/Ebola_DRC_2026/blob/main/data/flowminder/mobilite_flow_map_outflow_mar2026_zoom.png?raw=true))
+![outflows_plot]([Ebola_DRC_2026/data/flowminder/mobilite_flow_map_outflow_mar2026_zoom.png](https://github.com/kraemer-lab/Ebola_DRC_2026/blob/main/data/flowminder/mobilite_flow_map_outflow_mar2026_zoom.png?raw=true)
 
 The following section contains a detailed log on the pipeline used to extract data from the relevant tables in the PDF province-level reports.
 
