@@ -14,6 +14,8 @@ This is work done in support of the current response led by colleagues in the De
 - **Health facilities**: [GRID3 COD Health Facilities v8.0](https://data.grid3.org/datasets/GRID3::grid3-cod-health-facilities-v8-0/about)
 - **Mobile phone-based internal displacement estimates:** [Flowminder.org](https://www.flowminder.org/resources/publications-reports/drc-reports-publications)
 
+For the latest BDBV genomic data, please visit [Pathoplexus](https://pathoplexus.org/ebola-bdbv/search).
+
 # Repository layout
 
 ```
