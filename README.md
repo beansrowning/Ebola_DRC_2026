@@ -2,16 +2,15 @@
 
 Data for the 2026 Bundibugyo Ebolavirus (BDBV) outbreak.
 
-<p align = "center">
-<img src="docs/inrb_logo_2.jpeg" width=24%>
-<img src="docs/inoha.jpeg" width=24%>
-<img src="docs/insp.jpeg" width=24%>
-<img src="docs/inrb_extra.jpeg" width=24%>
+<p align="center">
+
+<img src="docs/inrb_logo_2.jpeg" width="24%"/> <img src="docs/inoha.jpeg" width="24%"/> <img src="docs/insp.jpeg" width="24%"/> <img src="docs/inrb_extra.jpeg" width="24%"/>
+
 </p>
 
-This work is led by the Institut National de Recherche Biomédicale (INRB) Kinshasa/One Health Institute for Africa (INOHA) Kinshasa (Dav Ebengo, Placide Mbala-Kingebeni and Tania Bishola), and the Institut National de Santé Publique (INSP) (Pierre Akilimali, Adelard Lofungola) in collaboration with partners across the University of Oxford and Northeastern University; please contact dav.ebengo@umie-inrb.org for further information.
+This work is led by the Institut National de Recherche Biomédicale (INRB) Kinshasa/One Health Institute for Africa (INOHA) Kinshasa (Dav Ebengo, Placide Mbala-Kingebeni and Tania Bishola), and the Institut National de Santé Publique (INSP) (Pierre Akilimali, Adelard Lofungola) in collaboration with partners across the University of Oxford and Northeastern University; please contact [dav.ebengo\@umie-inrb.org](mailto:dav.ebengo@umie-inrb.org){.email} for further information.
 
-Last successful build: **21 May 2026, 10:43:55 (+01:00)** (commit `d8905f5`).
+Last successful build: **21 May 2026, 15:54:00 (+01:00)** (commit `99ee96c`).
 
 # Data sources
 
@@ -30,11 +29,9 @@ For the latest BDBV genomic data, please visit [Pathoplexus](https://pathoplexus
 
 # Current build (2026-05-21)
 
-Snapshot of `build/drc_health_zones.geojson` (519 zones, \~36 MB) and the matrix catalogue, at commit `d8905f5`. Re-run `python -m tools.build_geojson` after pulling to regenerate locally; `build/manifest.json` carries the same information in machine-readable form.
+Snapshot of `build/drc_health_zones.geojson` (519 zones, \~25 MB) and the matrix catalogue, at commit `99ee96c`. Re-run `python -m tools.build_geojson` after pulling to regenerate locally; `build/manifest.json` carries the same information in machine-readable form.
 
-**New in this build:** `healthsites_io` — facility count and density per health zone from Healthsites.io (OpenStreetMap); metadata and both vector outputs passed QA and are embedded in the GeoJSON.
-
-**Embedded in the GeoJSON** — each output appears under `feature.properties.<dataset>.<metric>`:
+**Embedded in the GeoJSON** — each per-zone vector output appears under `feature.properties.<dataset>.<metric>` (matrices are excluded; see below):
 
 | Folder | Output | Retrieved | Status |
 |----|----|----|----|
@@ -46,21 +43,23 @@ Snapshot of `build/drc_health_zones.geojson` (519 zones, \~36 MB) and the matrix
 | gdp_pc | `gdp_pc__gdp_pc__static.csv` | 2026-05-20 | active |
 | healthsites_io | `healthsites_io__healthsite_count__static.csv` | 2026-05-20 | active |
 | healthsites_io | `healthsites_io__healthsite_density__static.csv` | 2026-05-20 | active |
-| osrm | `osrm__road_distance__static.csv` | 2026-03-17 | active |
-| osrm | `osrm__travel_time__static.csv` | 2026-03-17 | active |
 | refugee_sites | `refugee_sites__sites__static.csv` | 2026-05-20 | active |
 | worldpop | `worldpop__pop_count__static.csv` | 2026-05-20 | active |
 | worldpop | `worldpop__pop_density__static.csv` | 2026-05-20 | active |
 
-**Matrix outputs** — not embedded (large, square OD-style); fetched as raw CSV and catalogued in `qa/matrix_log.csv`:
+**Matrix outputs** — large origin–destination tables (519×519 for national sources). Not merged into `build/drc_health_zones.geojson`; use the files under `data/<dataset>/processed/` or the catalogue in `qa/matrix_log.csv`.
 
 | Folder     | Output                                   | Retrieved  | Status |
 |------------|------------------------------------------|------------|--------|
+| osrm       | `osrm__travel_time__static.matrix.csv`   | 2026-03-17 | active |
+| osrm       | `osrm__road_distance__static.matrix.csv` | 2026-03-17 | active |
 | IDP        | `idp__individuals__static.matrix.csv`    | 2026-01-31 | active |
 | IDP        | `idp__individuals__weekly.matrix.csv`    | 2026-01-31 | active |
 | IDP        | `idp__individuals__monthly.matrix.csv`   | 2026-01-31 | active |
 | flowminder | `flowminder__inflow__static.matrix.csv`  | 2026-05-20 | active |
 | flowminder | `flowminder__outflow__static.matrix.csv` | 2026-05-20 | active |
+
+**OSRM** (`data/osrm/`): pairwise **car** travel time (minutes) and road distance (km) between health zones via the [OSRM](http://project-osrm.org/) public API. Missing routes (e.g. Idjwi island) are stored as `NA` and may surface as QA **warn**; they are not embedded in the GeoJSON.
 
 **Not in build**: `ACLED_conflict` — province-grain placeholder, no QA-passing output yet.
 
@@ -97,7 +96,9 @@ build/
 
 **Processed-file naming:** `<dataset>__<metric>__<resolution>.{csv|matrix.csv}` - `<dataset>` and `<metric>` are lower_snake_case. - `<resolution>` ∈ {`static`, `daily`, `weekly`, `monthly`, `yearly`}. - Suffix is `.matrix.csv` for matrix outputs, `.csv` for vector (one-row-per-zone) outputs.
 
-**Vector files** carry a `nom` column. Non-static resolutions also carry a `date` column (ISO 8601). **Matrix files** layout: snapshot matrices have header `nom, <dest_nom_1>, ...`; time-series matrices have `date, nom, <dest_nom_1>, ...`. Cells are non-negative numeric.
+**Vector files** carry a `nom` column. Non-static resolutions also carry a `date` column (ISO 8601).
+
+**Matrix files** (`.matrix.csv`): snapshot matrices have header `nom, <dest_nom_1>, ...`; time-series matrices have `date, nom, <dest_nom_1>, ...`. Present cells must be non-negative numeric; missing values may be empty or `NA` (e.g. unroutable OSRM pairs).
 
 # Contributor flow
 
