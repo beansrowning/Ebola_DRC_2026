@@ -1,5 +1,5 @@
 # Bundibugyo Ebola virus outbreak 2026
-<img align="right" src="docs/inrb_logo.jpeg" width=170px>
+<img align="right" src="docs/WhatsApp Image 2026-05-21 at 1.52.22 PM.jpeg" width=170px>
 
 Data for the 2026 Bundibugyo Ebolavirus (BDBV) outbreak.
 
