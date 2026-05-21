@@ -1,11 +1,12 @@
 # QA report: epi
 
-_Checked: 2026-05-20T23:38:05+00:00_
+_Checked: 2026-05-21T00:02:09+00:00_
 
-**Status counts:** {'pass': 1, 'fail': 1}
+**Status counts:** {'pass': 2}
 
 ## `metadata.yaml` (metadata) — **pass**
 
-## `2026-05-18.csv` (structure) — **fail**
-- reasons:
-  - filename does not match contract <dataset>__<metric>__<resolution>.(csv|matrix.csv)
+## `epi__cases__weekly.csv` (vector) — **pass**
+- rows: 7
+- zones covered: 7 / 519
+- resolution: weekly

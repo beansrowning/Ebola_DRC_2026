@@ -5,7 +5,11 @@ retrieved_on: "2026-05-18"
 license: "WHO open access. Reuse with attribution per https://www.who.int/about/policies/publishing/copyright"
 contact: "outbreak@who.int"
 runtime: none
-status: placeholder
 notes: |
-  Folder reserved for case-line / weekly counts per health zone from the WHO Sitrep.
-  Source file 2026-05-18.csv was removed (see git history); awaiting clean re-import.
+  Weekly case and death counts (suspected and confirmed) per health zone from the WHO
+  Bundibugyo Ebola virus outbreak Situation Reports. Output: epi__cases__weekly.csv
+  with columns nom, date, suspected_cases, suspected_deaths, confirmed_cases,
+  confirmed_deaths. Zone names are resolved to canonical form via data/aliases.csv.
+  The Uganda/Kampala row in Sitrep 01 (cross-border confirmed case) is excluded as it
+  does not correspond to a DRC health zone. "Rwmapara" (transposition of Rwampara)
+  and "Mongbwalu"/"Nyankunde" are resolved via aliases.csv.
