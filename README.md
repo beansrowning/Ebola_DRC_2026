@@ -38,7 +38,7 @@ Snapshot of `build/drc_health_zones.geojson` (519 zones, \~25 MB) and the matrix
 
 <!-- whats-new:start -->
 **22 May 2026 (commit `8259588`)**
-- **`insp_sitrep`** — twelve daily INSP SitRep MVE metrics embedded in the GeoJSON (latest report `date` per zone; outbreak-affected zones only).
+- **`insp_sitrep`** — twelve manually transcribed daily INSP SitRep MVE metrics embedded in the GeoJSON (latest report `date` per zone; outbreak-affected zones only).
 - **`grid3_healthsites`** — national health-facility count and density per zone (GRID3 COD v8.0) embedded alongside `healthsites_io`.
 <!-- whats-new:end -->
 
