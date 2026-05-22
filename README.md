@@ -20,7 +20,7 @@ Last successful build: **22 May 2026, 14:56:59 (UTC)** (commit `8259588`).
 -   **Road travel times:** [OSRM](http://project-osrm.org/) public demo (`data/osrm/`, matrix outputs)
 -   **Cross-border travel:** [Imperial College Report](https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/research-themes/preparedness-and-response-to-emerging-threats/report-ebola-18-05-2026/)
 -   **Conflicts and acts of violence:** [ACLED](https://acleddata.com)
--   **Internal displacements:** International Organisation for Migrants ([IOM](https://dtm.iom.int))
+-   **Internal relocations:** International Organisation for Migrants ([IOM](https://dtm.iom.int))
 -   **Population size rasters:** [GRID3 v4.4 gridded population](https://data.grid3.org/maps/a3db539c0fae4c05aed92ed67e11fe2b/about)
 -   **Health facilities (GRID3):** [GRID3 COD Health Facilities v8.0](https://data.grid3.org/datasets/GRID3::grid3-cod-health-facilities-v8-0/about) (`data/grid3_healthsites/`)
 -   **Health facilities (OSM / crowdsourced):** [Healthsites.io](https://healthsites.io/) (`data/healthsites_io/`)
@@ -84,11 +84,6 @@ Snapshot of `build/drc_health_zones.geojson` (519 zones, \~25 MB) and the matrix
 | flowminder | `flowminder__inflow__static.matrix.csv`  | 2026-05-20 | active |
 | flowminder | `flowminder__outflow__static.matrix.csv` | 2026-05-20 | active |
 
-**OSRM** (`data/osrm/`): pairwise **car** travel time (minutes) and road distance (km) between health zones via the [OSRM](http://project-osrm.org/) public API. Missing routes (e.g. Idjwi island) are stored as `NA` and may surface as QA **warn**; they are not embedded in the GeoJSON.
-
-**INSP sitreps** (`data/insp_sitrep/`): complements `data/epi/` (WHO weekly external sitrep) with **daily** INSP-internal reporting; embedded under `feature.properties.insp_sitrep.<metric>` for outbreak-affected zones only (7–8 zones per metric in the current snapshot). Values use `ND` where a metric was not reported on that date. Full time series: `build/long/insp_sitrep__*.csv`.
-
-**GRID3 health facilities** (`data/grid3_healthsites/`): MoH/partner facility master list (\~38k points), generally more complete than `healthsites_io` (OSM-only, filtered subset); count and density embedded for all 519 zones.
 
 **Not in build**: `ACLED_conflict` — province-grain placeholder, no QA-passing output yet.
 
