@@ -10,7 +10,7 @@ Data for the 2026 Bundibugyo Ebolavirus (BDBV) outbreak.
 
 This work is led by the Institut National de Recherche Biomédicale (INRB) Kinshasa/One Health Institute for Africa (INOHA) Kinshasa (Dav Ebengo, Placide Mbala-Kingebeni and Tania Bishola), and the Institut National de Santé Publique (INSP) (Pierre Akilimali, Adelard Lofungola) in collaboration with partners across the University of Oxford and Northeastern University; please contact [dav.ebengo\@umie-inrb.org](mailto:dav.ebengo@umie-inrb.org) for further information.
 
-Last successful build: **21 May 2026, 15:54:00 (+01:00)** (commit `99ee96c`).
+Last successful build: **22 May 2026, 00:29 (UTC)** (commit `9694d10`).
 
 # Data sources
 
@@ -30,9 +30,14 @@ For the latest BDBV genomic data, please visit [Pathoplexus](https://pathoplexus
 ## Pending data sources
 We are tracking pending data sources over on the [issues tab](https://github.com/kraemer-lab/Ebola_DRC_2026/issues). If you want to request a specific publicly available dataset, raise an issue (although raising an issue does not guarantee that we will incorporate a dataset.
 
-# Current build (2026-05-21)
+# Current build (2026-05-22)
 
 Snapshot of `build/drc_health_zones.geojson` (519 zones, \~25 MB) and the matrix catalogue, at commit `99ee96c`. Re-run `python -m tools.build_geojson` after pulling to regenerate locally; `build/manifest.json` carries the same information in machine-readable form.
+
+<!-- whats-new:start -->
+First release on 22 May 2026
+First release on 22 May 2026
+<!-- whats-new:end -->
 
 **Embedded in the GeoJSON** — each per-zone vector output appears under `feature.properties.<dataset>.<metric>` (matrices are excluded; see below):
 
@@ -65,6 +70,13 @@ Snapshot of `build/drc_health_zones.geojson` (519 zones, \~25 MB) and the matrix
 **OSRM** (`data/osrm/`): pairwise **car** travel time (minutes) and road distance (km) between health zones via the [OSRM](http://project-osrm.org/) public API. Missing routes (e.g. Idjwi island) are stored as `NA` and may surface as QA **warn**; they are not embedded in the GeoJSON.
 
 **Not in build**: `ACLED_conflict` — province-grain placeholder, no QA-passing output yet.
+
+## Past releases
+
+<!-- past-releases:start -->
+| Tag | Date | Summary | Download |
+|-----|------|---------|----------|
+<!-- past-releases:end -->
 
 # Repository layout
 
@@ -114,6 +126,11 @@ build/
 
     LFS is required because binary raw blobs (`*.xlsx`, `*.zip`, `*.pdf`, `*.tif`, etc.) under `data/*/raw/` are stored via Git LFS — see `.gitattributes`.
 
+    Additionally, maintainers who will cut releases need:
+
+    -   `gh` CLI installed and authenticated (`gh auth login`).
+    -   `$EDITOR` environment variable set (used by `tools.release` for the description prompt).
+
 1.  Create `data/<your_dataset>/` with `raw/`, `metadata.yaml`, and (when you have outputs) `process.{py,R}` + `processed/`.
 
 2.  Make sure your processed filenames match the contract above. Add any name aliases your data uses to `data/aliases.csv`.
@@ -132,6 +149,23 @@ build/
     ```
 
 5.  Open a PR. CI runs `pytest` + `tools.qa` and blocks merge on any failures. Merges to `main` are manual.
+
+6.  Publishing a release (maintainer task). After a merge to `main` introduces changes worth a new public snapshot:
+
+    ```
+    .venv/bin/python -m tools.release
+    ```
+
+    This will:
+
+    -   archive the current `build/` (plus QA logs and the previous build's description) as a GitHub Release tagged `build-YYYY-MM-DD-<sha>`
+    -   rebuild from current data
+    -   open `$EDITOR` to capture a "what's new" description for the new build
+    -   update `README.md` (current-build pointers + Past releases log)
+
+    Then `git add build/ qa/*.csv qa/reports/ README.md && git commit && git push` to land the new build alongside its description.
+
+    Use `tools.build_geojson` (not `tools.release`) for normal local iteration — `tools.release` is only for cutting versioned snapshots.
 
 # Citation
 
