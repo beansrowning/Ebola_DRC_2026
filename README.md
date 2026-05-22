@@ -16,7 +16,7 @@ Last successful build: **22 May 2026, 14:56:59 (UTC)** (commit `8259588`).
 
 -   **DRC health zones:** [Humanitarian Data Exchange](https://data.humdata.org/dataset/drc-health-data) (MoH zones de santé shapefile)
 -   **Epidemiological data (WHO):** [Weekly External Situation Report 01, Data as of 18 May 2026](https://iris.who.int/server/api/core/bitstreams/bb1d4668-04e0-4563-b7c4-d1bdefbc9f05/content) (`data/epi/`)
--   **Epidemiological & operational data (INSP):** [Institut National de Santé Publique (INSP)](https://insp.cd/) SitRep MVE PDF series (`data/insp_sitrep/`) — daily case, death, and contact-tracing indicators by health zone
+-   **Epidemiological & operational data (INSP):** [Institut National de Santé Publique (INSP)](https://insp.cd/) SitRep MVE PDF series (`data/insp_sitrep/`) — daily case, death, and contact-tracing indicators by health zone **manually transcribed from the sitreps**
 -   **Road travel times:** [OSRM](http://project-osrm.org/) public demo (`data/osrm/`, matrix outputs)
 -   **Cross-border travel:** [Imperial College Report](https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/research-themes/preparedness-and-response-to-emerging-threats/report-ebola-18-05-2026/)
 -   **Conflicts and acts of violence:** [ACLED](https://acleddata.com)
