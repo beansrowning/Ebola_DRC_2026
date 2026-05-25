@@ -34,7 +34,7 @@ We are tracking pending data sources over on the [issues tab](https://github.com
 
 # Current build (2026-05-25)
 
-Snapshot of `build/drc_health_zones.geojson` (519 zones, **25** embedded vector layers, \~26 MB) and the matrix catalogue. Built **22 May 2026, 18:27:39 (UTC)** from data at commit `493d506`; artifacts on `main` in [`235a3c3`](https://github.com/kraemer-lab/Ebola_DRC_2026/commit/235a3c34f97aeb54b48a9ea447ee21ed33057cb4) (*QA checks and new build for sitrep 007*), merged at [`3e1e714`](https://github.com/kraemer-lab/Ebola_DRC_2026/commit/3e1e714ad800d0002cb3a5d2e1c926a61105e61a). Re-run `python -m tools.build_geojson` after pulling to regenerate locally; `build/manifest.json` carries the same information in machine-readable form.
+Snapshot of `build/drc_health_zones.geojson` (519 zones, **25** embedded vector layers, \~26 MB) and the matrix catalogue. **25 May 2026, 11:12:07 (UTC)** — `build/` on `main` at commit [`913be1e`](https://github.com/kraemer-lab/Ebola_DRC_2026/commit/913be1e0fd0e42aa7018c0bd322fa7eb8f729533) (data snapshot [`913be1e`](https://github.com/kraemer-lab/Ebola_DRC_2026/commit/913be1e), see `build/manifest.json`). Re-run `python -m tools.build_geojson` after pulling to regenerate locally; `build/manifest.json` carries the same information in machine-readable form.
 
 <!-- whats-new:start -->
 
