@@ -13,7 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 def test_manifest_has_built_at_and_commit():
     """After running build_geojson, manifest.json must carry built_at + commit."""
     result = subprocess.run(
-        [sys.executable, "-m", "tools.build_geojson"],
+        [sys.executable, "-m", "tools.build_geojson", "--skip-readme"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,

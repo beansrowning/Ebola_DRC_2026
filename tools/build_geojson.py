@@ -22,10 +22,14 @@ qa/matrix_log.csv as the catalog.
 
 Run from repo root:
     python -m tools.build_geojson
+
+On success, updates the ``Last successful build`` line in ``README.md`` from
+``build/manifest.json`` (use ``--skip-readme`` to disable).
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import datetime as dt
 import json
@@ -37,6 +41,11 @@ from pathlib import Path
 import shapefile  # pyshp
 import yaml
 
+from tools.lib.release import (
+    format_last_build_line,
+    replace_current_build_heading,
+    replace_last_build_line,
+)
 from tools.lib.schema import (
     REPO_ROOT,
     SHAPEFILE,
@@ -44,6 +53,8 @@ from tools.lib.schema import (
     parse_filename,
     to_canonical,
 )
+
+README = REPO_ROOT / "README.md"
 
 DATA_DIR = REPO_ROOT / "data"
 QA_LOG = REPO_ROOT / "qa" / "qa_log.csv"
@@ -152,17 +163,51 @@ def _attach_vector(folder: Path, file_name: str, parsed, features_by_nom: dict[s
     return attached
 
 
-def _current_short_sha() -> str:
-    """Return `git rev-parse --short HEAD`. Empty string if not in a git tree."""
+def _git_head_shas() -> tuple[str, str]:
+    """Return (full_sha, short_sha). Empty strings if not in a git tree."""
     try:
-        out = subprocess.check_output(
+        full = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(REPO_ROOT),
+            stderr=subprocess.DEVNULL,
+        ).decode().strip()
+        short = subprocess.check_output(
             ["git", "rev-parse", "--short", "HEAD"],
             cwd=str(REPO_ROOT),
             stderr=subprocess.DEVNULL,
-        )
-        return out.decode().strip()
+        ).decode().strip()
+        return full, short
     except (subprocess.CalledProcessError, FileNotFoundError):
-        return ""
+        return "", ""
+
+
+def _current_short_sha() -> str:
+    return _git_head_shas()[1]
+
+
+def _stamp_readme(manifest: dict) -> None:
+    """Update README build timestamp lines from a fresh manifest."""
+    if not README.exists():
+        print(f"README not found at {README}; skipping stamp.", file=sys.stderr)
+        return
+    built_at = manifest["built_at"]
+    commit_short = manifest["commit"]
+    head_full, _ = _git_head_shas()
+    last_build_line = format_last_build_line(
+        built_at=built_at,
+        commit_short=commit_short,
+        head_full_sha=head_full,
+    )
+    build_date = built_at.split("T", 1)[0]
+    readme = README.read_text(encoding="utf-8")
+    readme = replace_last_build_line(readme, last_build_line)
+    readme = replace_current_build_heading(readme, build_date)
+    README.write_text(readme, encoding="utf-8")
+    try:
+        label = str(README.relative_to(REPO_ROOT))
+    except ValueError:
+        label = str(README)
+    print(f"stamped {label} (Last successful build)")
 
 
 def _build_manifest(qa_rows: list[dict], attached_counts: dict[tuple[str, str], int]) -> dict:
@@ -226,7 +271,17 @@ def _build_manifest(qa_rows: list[dict], attached_counts: dict[tuple[str, str], 
     }
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Build merged GeoJSON and manifest from QA-passing vector outputs.",
+    )
+    parser.add_argument(
+        "--skip-readme",
+        action="store_true",
+        help="Do not update the Last successful build line in README.md",
+    )
+    args = parser.parse_args(argv)
+
     if not QA_LOG.exists():
         print(f"qa log not found at {QA_LOG}; run tools/qa.py first.", file=sys.stderr)
         return 2
@@ -258,6 +313,14 @@ def main() -> int:
         f"({len(features)} features, {GEOJSON_OUT.stat().st_size // 1024} KB)"
     )
     print(f"wrote {MANIFEST_OUT.relative_to(REPO_ROOT)}")
+
+    if not args.skip_readme:
+        try:
+            _stamp_readme(manifest)
+        except ValueError as exc:
+            print(f"README stamp failed: {exc}", file=sys.stderr)
+            return 1
+
     return 0
 
 

@@ -6,11 +6,46 @@ import pytest
 
 from tools.lib.release import (
     build_tag,
+    format_human_timestamp,
+    format_last_build_line,
     pack_archive,
     render_editor_template,
+    replace_last_build_line,
     rewrite_readme,
     strip_editor_comments,
 )
+
+
+# ---------- README build stamp helpers ----------
+
+
+def test_format_human_timestamp_utc():
+    assert format_human_timestamp("2026-05-22T18:27:39+00:00") == (
+        "22 May 2026, 18:27:39 (UTC)"
+    )
+
+
+def test_format_last_build_line_includes_timestamp_and_links():
+    line = format_last_build_line(
+        built_at="2026-05-22T18:27:39+00:00",
+        commit_short="493d506",
+        head_full_sha="3e1e714ad800d0002cb3a5d2e1c926a61105e61a",
+        github_repo="kraemer-lab/Ebola_DRC_2026",
+    )
+    assert line.startswith("Last successful build: **22 May 2026, 18:27:39 (UTC)**")
+    assert "[`3e1e714`](https://github.com/kraemer-lab/Ebola_DRC_2026/commit/3e1e714ad800d0002cb3a5d2e1c926a61105e61a)" in line
+    assert "[`493d506`](https://github.com/kraemer-lab/Ebola_DRC_2026/commit/493d506)" in line
+
+
+def test_replace_last_build_line_swaps_single_line():
+    readme = "Header\n\nLast successful build: **OLD** (commit `x`).\n\n# Current build (2026-01-01)\n"
+    new_line = format_last_build_line(
+        built_at="2026-05-22T18:27:39+00:00",
+        commit_short="abc1234",
+    )
+    out = replace_last_build_line(readme, new_line)
+    assert "Last successful build: **OLD**" not in out
+    assert new_line in out
 
 
 # ---------- build_tag ----------

@@ -23,6 +23,7 @@ from pathlib import Path
 
 from tools.lib.release import (
     build_tag,
+    format_last_build_line,
     pack_archive,
     render_editor_template,
     rewrite_readme,
@@ -175,23 +176,26 @@ def _prompt_description() -> str:
     return body
 
 
-def _format_human_date(iso_ts: str) -> str:
-    """Render an ISO 8601 timestamp as e.g. '21 May 2026, 10:00 (UTC)'."""
-    parsed = dt.datetime.fromisoformat(iso_ts)
-    if parsed.tzinfo:
-        tzname = parsed.tzname() or "UTC"
-        return parsed.strftime(f"%-d %B %Y, %H:%M ({tzname})")
-    return parsed.strftime("%-d %B %Y, %H:%M")
-
-
 def _update_readme(archived: tuple[str, str] | None, archived_summary: str | None) -> None:
     manifest = json.loads(MANIFEST.read_text())
     built_at = manifest["built_at"]
     short_sha = manifest["commit"]
     current_date = built_at.split("T", 1)[0]
-    human_ts = _format_human_date(built_at)
 
-    last_build_line = f"Last successful build: **{human_ts}** (commit `{short_sha}`)."
+    try:
+        head_full = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(REPO_ROOT),
+            stderr=subprocess.DEVNULL,
+        ).decode().strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        head_full = ""
+
+    last_build_line = format_last_build_line(
+        built_at=built_at,
+        commit_short=short_sha,
+        head_full_sha=head_full,
+    )
     whats_new = DESCRIPTION.read_text().rstrip()
 
     if archived and archived_summary:

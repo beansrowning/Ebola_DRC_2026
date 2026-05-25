@@ -7,9 +7,12 @@ environment dependencies.
 
 from __future__ import annotations
 
+import datetime as dt
 import re
 import tarfile
 from pathlib import Path
+
+DEFAULT_GITHUB_REPO = "kraemer-lab/Ebola_DRC_2026"
 
 
 def build_tag(date_or_iso: str, short_sha: str) -> str:
@@ -63,6 +66,61 @@ def pack_archive(members: list[tuple[Path, str]], out_path: Path) -> None:
             tf.add(str(src), arcname=arcname)
 
 
+def format_human_timestamp(iso_ts: str) -> str:
+    """Render an ISO 8601 timestamp as e.g. '22 May 2026, 18:27:39 (UTC)'."""
+    parsed = dt.datetime.fromisoformat(iso_ts)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=dt.timezone.utc)
+    utc = parsed.astimezone(dt.timezone.utc)
+    return f"{utc.day} {utc.strftime('%B %Y, %H:%M:%S')} (UTC)"
+
+
+def format_last_build_line(
+    *,
+    built_at: str,
+    commit_short: str,
+    head_full_sha: str = "",
+    github_repo: str = DEFAULT_GITHUB_REPO,
+) -> str:
+    """Single README line for the latest successful GeoJSON build."""
+    human = format_human_timestamp(built_at)
+    head_full = head_full_sha or commit_short
+    head_short = head_full[:7] if len(head_full) >= 7 else head_full
+    data_url = f"https://github.com/{github_repo}/commit/{commit_short}"
+    head_url = f"https://github.com/{github_repo}/commit/{head_full}"
+    return (
+        f"Last successful build: **{human}** — `build/` on `main` at commit "
+        f"[`{head_short}`]({head_url}) (data snapshot [`{commit_short}`]({data_url}), "
+        f"see `build/manifest.json`)."
+    )
+
+
+def replace_last_build_line(readme: str, last_build_line: str) -> str:
+    """Swap the `Last successful build:` line; raises if the line is missing."""
+    if not re.search(r"^Last successful build:", readme, flags=re.MULTILINE):
+        raise ValueError("README is missing a `Last successful build:` line")
+    return re.sub(
+        r"^Last successful build:.*$",
+        lambda _: last_build_line,
+        readme,
+        count=1,
+        flags=re.MULTILINE,
+    )
+
+
+def replace_current_build_heading(readme: str, build_date: str) -> str:
+    """Update `# Current build (YYYY-MM-DD)` to match the manifest build date."""
+    if not re.search(r"^# Current build \(", readme, flags=re.MULTILINE):
+        raise ValueError("README is missing a `# Current build (...)` heading")
+    return re.sub(
+        r"^# Current build \([^)]*\)",
+        f"# Current build ({build_date})",
+        readme,
+        count=1,
+        flags=re.MULTILINE,
+    )
+
+
 WHATS_NEW_START = "<!-- whats-new:start -->"
 WHATS_NEW_END = "<!-- whats-new:end -->"
 PAST_RELEASES_START = "<!-- past-releases:start -->"
@@ -95,21 +153,8 @@ def rewrite_readme(
         if marker not in readme:
             raise ValueError(f"README is missing marker: {marker}")
 
-    readme = re.sub(
-        r"^Last successful build:.*$",
-        lambda _: last_build_line,
-        readme,
-        count=1,
-        flags=re.MULTILINE,
-    )
-
-    readme = re.sub(
-        r"^# Current build \([^)]*\)",
-        f"# Current build ({current_build_date})",
-        readme,
-        count=1,
-        flags=re.MULTILINE,
-    )
+    readme = replace_last_build_line(readme, last_build_line)
+    readme = replace_current_build_heading(readme, current_build_date)
 
     whats_new_block = f"{WHATS_NEW_START}\n{whats_new}\n{WHATS_NEW_END}"
     readme = re.sub(
