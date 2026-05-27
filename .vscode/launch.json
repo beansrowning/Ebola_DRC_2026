@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Debug geoJSON Build",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tools.build_geojson"
+        }
+    ]
+}
