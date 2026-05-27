@@ -1,0 +1,73 @@
+name: Build Data
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'data/**'
+  workflow_dispatch:
+
+
+permissions:
+  contents: write
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup UV
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          activate-environment: "true"
+          enable-cache: "true"
+
+      - name: Load project deps
+        run: |
+          uv sync
+          uv pip install -e .
+
+      - name: Run QA
+        run: |
+          python -m tools.qa
+  publish:
+    runs-on: ubuntu-latest
+    needs: [ "qa" ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup UV
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          activate-environment: "true"
+          enable-cache: "true"
+
+      - name: Load project deps
+        run: |
+          uv sync
+          uv pip install -e .
+
+      - name: Run Build
+        run: |
+          python -m tools.build_geojson
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          path: "build/"
+          archive: true
+      
