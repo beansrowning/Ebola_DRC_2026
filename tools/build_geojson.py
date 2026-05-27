@@ -104,6 +104,8 @@ def _load_features() -> tuple[list[dict], dict[str, dict]]:
                 "nom": zone.canonical_nom,
                 "zscode": zone.zscode,
                 "province": zone.province,
+                # NOTE: unique id we use interal to CDC to join to other spatial objects
+                "unique_id": f"COD_{zone.province}_{zone.canonical_nom}",
             },
         }
         features.append(feat)
