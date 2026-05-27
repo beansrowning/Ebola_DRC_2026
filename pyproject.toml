@@ -1,0 +1,17 @@
+[project]
+name = "tools"
+version = "0.1.0"
+description = "Data and scripts for epidemiological analysis of the 2026 Bundibugyo Ebola outbreak"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pyshp>=2.3",
+    "pytest>=8.0",
+    "pyyaml>=6.0",
+    "radian>=0.6.16",
+    "shapely>=2.0",
+]
+
+[tool.setuptools.packages.find]
+where = [ "." ]
+include = [ "tools*" ]
