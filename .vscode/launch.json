@@ -7,6 +7,12 @@
             "module": "tools.build_geojson"
         },
         {
+            "name": "Debug CDC Wide build",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tools.build_cdc"
+        },
+        {
             "name": "Debug Test Suite",
             "type": "debugpy",
             "request": "launch",

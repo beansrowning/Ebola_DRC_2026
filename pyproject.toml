@@ -5,6 +5,7 @@ description = "Data and scripts for epidemiological analysis of the 2026 Bundibu
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "polars>=1.41.1",
     "pyshp>=2.3",
     "pytest>=8.0",
     "pyyaml>=6.0",
