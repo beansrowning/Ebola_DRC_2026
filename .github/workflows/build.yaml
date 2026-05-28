@@ -40,7 +40,7 @@ jobs:
       - name: Run QA
         run: |
           python -m tools.qa
-  publish:
+  data_build:
     runs-on: ubuntu-latest
     needs: [ "qa" ]
 
@@ -61,10 +61,14 @@ jobs:
           uv sync
           uv pip install -e .
 
-      - name: Run Build
+      - name: Run INSP Build
         run: |
           python -m tools.build_geojson
       
+      - name: Run CDC Build
+        run: |
+          python -m tools.build_cdc
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
