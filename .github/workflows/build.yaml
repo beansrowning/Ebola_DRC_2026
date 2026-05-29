@@ -20,6 +20,8 @@ permissions:
 jobs:
   qa:
     runs-on: ubuntu-latest
+    outputs:
+      dates_fixed: ${{ steps.run_qa.outputs.dates_fixed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -38,8 +40,27 @@ jobs:
           uv pip install -e .
 
       - name: Run QA
+        id: run_qa
         run: |
+          if python -m tools.qa; then
+            echo "dates_fixed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "QA failed; attempting date-format repair from qa/qa_log.csv"
+          cp qa/qa_log.csv qa/qa_log.date_fix.csv
+          python -m tools.fix_non_iso_dates --qa-log qa/qa_log.date_fix.csv
+          echo "dates_fixed=true" >> "$GITHUB_OUTPUT"
           python -m tools.qa
+
+      - name: Upload date-fix QA log
+        if: steps.run_qa.outputs.dates_fixed == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: qa-date-fix-log
+          path: qa/qa_log.date_fix.csv
+          if-no-files-found: error
+
   data_build:
     runs-on: ubuntu-latest
     needs: [ "qa" ]
@@ -61,10 +82,22 @@ jobs:
           uv sync
           uv pip install -e .
 
+      - name: Download date-fix QA log
+        if: needs.qa.outputs.dates_fixed == 'true'
+        uses: actions/download-artifact@v7
+        with:
+          name: qa-date-fix-log
+          path: qa
+
+      - name: Fix non-ISO dates
+        if: needs.qa.outputs.dates_fixed == 'true'
+        run: |
+          python -m tools.fix_non_iso_dates --qa-log qa/qa_log.date_fix.csv
+
       - name: Run INSP Build
         run: |
           python -m tools.build_geojson
-      
+
       - name: Run CDC Build
         run: |
           python -m tools.build_cdc
@@ -75,4 +108,3 @@ jobs:
           name: "Latest Data"
           path: "build/"
           archive: true
-      
