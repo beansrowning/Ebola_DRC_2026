@@ -128,8 +128,12 @@ def main(project_root: Path, force_qa: bool, out_path: Optional[Path]):
     )
 
     long_table = (
-        reduce(lambda l, r: l.join(r, on=["date", "nom"], how="left"), vert, nom_dates)
-        .sort(["nom", "date"])
+        onetable
+        .join(
+            reduce(lambda l, r: l.join(r, on=["date", "nom"], how="left"), vert, nom_dates),
+            on="nom"
+        )
+        .sort(["unique_id", "date"])
     )
 
     wide_table = reduce(lambda l, r: l.join(r, on="nom", how="left"), horz, onetable)
