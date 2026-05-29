@@ -88,7 +88,7 @@ def main(project_root: Path, force_qa: bool, out_path: Optional[Path]):
     for row in qa_manifest.select(["file", "file_path"]).iter_rows(named=True):
         # Read in data and match HZ to canonical
         df = (
-            pl.read_csv(row["file_path"])
+            pl.read_csv(row["file_path"], null_values=["ND"])
             .with_columns(
                 nom = pl.col("nom").map_elements(to_canonical, return_dtype=pl.String)
             )
