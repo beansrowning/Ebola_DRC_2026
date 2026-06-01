@@ -62,7 +62,7 @@ Occasionally, health zone level data may be sent directly from INSP to INRB. Thi
 | Layer | Zones | Date range in CSVs |
 |----|----|----|
 | Outbreak-zone metrics | **21** canonical `nom` values (see list below) | Mostly **2026-05-14** – **2026-05-24** (ISO); hospitalisation and PoE from **2026-05-20**; PoE through **2026-05-23** |
-| National `national_*` metrics | **519** rows per date (same total on every row) | **2026-05-26** (ISO) |
+| National `national_*` metrics | **`nom` = `DRC`**, one row per date | **2026-05-14** – **2026-05-28** in current files (`DD/MM/YYYY` in `date`) |
 
 PDFs **011** and **012** are in `raw/`; zone-level processed tables may not yet include rows from those reports until they are transcribed.
 
@@ -99,16 +99,18 @@ Grammar: `tools/lib/schema.py`. Each file is a long-format vector: **`nom`**, **
 | `insp_sitrep__cumulative_contacts_isolated__daily.csv` | `cumulative_contacts_isolated` |  |
 | `insp_sitrep__contacts_seen__daily.csv` | `contacts_seen` |  |
 
-### National cumulative totals (519 zones per date)
+### National cumulative totals (`nom` = `DRC`)
 
-Republic-wide figures from sitrep summary tables, **copied to every `nom`** on that `date`. **Do not sum across zones.**
+Republic-wide figures from the sitrep summary banner. **One row per report date** with `nom` = **`DRC`**:
 
 | File | Value column | Notes |
 |----|----|----|
-| `insp_sitrep__national_cumulative_suspected_cases__daily.csv` | `national_cumulative_suspected_cases` |  |
-| `insp_sitrep__national_cumulative_confirmed_cases__daily.csv` | `national_cumulative_confirmed_cases` |  |
-| `insp_sitrep__national_cumulative_suspected_deaths__daily.csv` | `national_cumulative_suspected_deaths` |  |
-| `insp_sitrep__national_cumulative_confirmed_deaths__daily.csv` | `national_cumulative_confirmed_deaths` |  |
+| `insp_sitrep__national_cumulative_suspected_cases__daily.csv` | `national_cumulative_suspected_cases` | |
+| `insp_sitrep__national_cumulative_confirmed_cases__daily.csv` | `national_cumulative_confirmed_cases` | |
+| `insp_sitrep__national_cumulative_suspected_deaths__daily.csv` | `national_cumulative_suspected_deaths` | |
+| `insp_sitrep__national_cumulative_confirmed_deaths__daily.csv` | `national_cumulative_confirmed_deaths` | |
+
+`tools.build_geojson` applies the **latest** `DRC` row for each metric to **all** health-zone features (same map behaviour as before, without 519 duplicate CSV rows).
 
 ### Hospitalisation (from 2026-05-20 in current data)
 
@@ -140,9 +142,16 @@ Per-site PoE breakdown in the PDFs is not exported.
 
 | Column | Description |
 |----|----|
-| `nom` | Canonical health-zone name after `process.R` (see `data/shapefiles/`, `data/aliases.csv`) |
+| `nom` | Canonical health-zone name after `process.R`, or **`Sans Fiche`** / **`NA`** for non-zone roll-ups (kept in CSV, omitted from GeoJSON) |
 | `date` | Sitrep **report date** (ISO `YYYY-MM-DD`) |
 | `<metric>` | Count, or **`ND`** if not reported in that sitrep |
+
+**Special `nom` values:**
+
+| `nom` | In CSV | In GeoJSON |
+|-------|--------|------------|
+| `Sans Fiche`, `NA` | Yes | No (omitted from map) |
+| `DRC` | Yes (`national_*` files only) | Yes (broadcast to every zone) |
 
 **Uniqueness:** one row per (`nom`, `date`) per file.
 
@@ -198,7 +207,7 @@ python -m tools.build_geojson   # if vectors pass QA
 | `ND` cells | Metric not published for that zone/date. |
 | Missing sitrep 003 | Gap between reports 002 and 004. |
 | PDF vs processed lag | `raw/` includes 011–012; zone tables may end earlier until transcribed. |
-| National files | 519 identical totals per date; do not sum across zones. |
+| National files | Use `nom` = `DRC` only; do not duplicate republic totals across zone rows in CSV. |
 | Hospitalisation column names | e.g. `new_all_admissions`, `new_other`, `escaped` differ from filename tokens. |
 | No PDF automation | `process.R` only normalises `nom`. |
 

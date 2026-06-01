@@ -26,6 +26,11 @@ PROCESSED_DIR <- file.path(DATA_DIR, "processed")
 SHAPEFILE <- file.path(repo_root, "data", "shapefiles", "DRC_Health_zones.shp")
 ALIASES_CSV <- file.path(repo_root, "data", "aliases.csv")
 
+# Not MoH health zones; kept in CSV nom but excluded from GeoJSON build.
+NON_GEOGRAPHIC_NOMS <- c("Sans Fiche", "NA")
+# National roll-up in national_* CSVs (one row per date; broadcast in GeoJSON build).
+NATIONAL_ROLLUP_NOM <- "DRC"
+
 
 # nom per shapefile dictionary
 build_canonical_nom_lookup <- function(zones) {
@@ -63,6 +68,9 @@ to_canonical <- function(name, canonical_noms, alias_index) {
     return(NA_character_)
   }
   name <- trimws(name)
+  if (name %in% NON_GEOGRAPHIC_NOMS || name == NATIONAL_ROLLUP_NOM) {
+    return(name)
+  }
   if (name %in% canonical_noms) {
     return(name)
   }
@@ -84,7 +92,8 @@ normalize_nom_column <- function(df, canonical_noms, alias_index) {
     canonical_noms = canonical_noms,
     alias_index = alias_index
   )
-  unresolved <- sort(unique(df$nom[is.na(resolved)]))
+  allowed <- c(NON_GEOGRAPHIC_NOMS, NATIONAL_ROLLUP_NOM)
+  unresolved <- sort(unique(df$nom[is.na(resolved) & !(df$nom %in% allowed)]))
   if (length(unresolved)) {
     stop(
       "Unresolved zone name(s): ",
