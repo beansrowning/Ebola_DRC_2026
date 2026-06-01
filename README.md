@@ -6,7 +6,7 @@
 
 This work is led by the Institut National de Recherche Biomédicale (INRB) Kinshasa/One Health Institute for Africa (INOHA) Kinshasa (Dav Ebengo, Placide Mbala-Kingebeni and Tania Bishola), and the Institut National de Santé Publique (INSP) (Pierre Akilimali, Adelard Lofungola) in collaboration with partners across the University of Oxford and Northeastern University; please contact [dav.ebengo\@umie-inrb.org](mailto:dav.ebengo@umie-inrb.org) or [pierre.akilimali\@insp.cd](mailto:pierre.akilimali@insp.cd) for further information.
 
-Last successful build: **30 May 2026, 13:05:37 (UTC)** — `build/` on `main` at commit [`e125835`](https://github.com/INRB-UMIE/Ebola_DRC_2026/commit/e125835b47dd38b83332bf1ad2f308e2ba776632) (data snapshot [`e125835`](https://github.com/INRB-UMIE/Ebola_DRC_2026/commit/e125835), see `build/manifest.json`).
+Last successful build: **30 May 2026, 23:36:17 (UTC)** — `build/` on `main` at commit [`507a2a2`](https://github.com/INRB-UMIE/Ebola_DRC_2026/commit/507a2a2d587d7e8ab9c4321e1712b5954dc5c9ec) (data snapshot [`507a2a2`](https://github.com/INRB-UMIE/Ebola_DRC_2026/commit/507a2a2), see `build/manifest.json`).
 
 # Data sources
 
@@ -34,13 +34,7 @@ The current build is committed on `main` and refreshed automatically by CI on ev
 
 ### What's New
 <!-- whats-new:start -->
-Latest release fixing a number of minor processing issues in past sitreps.
-
-- Some errors fixed in sitrep 13
-- National suspected cases and deaths (from PDF banner) now back updated to full outbreak
-- Raw sitrep 13 uploaded
-- Sitrep 12 values updated to reflect the newer version of Sitrep 12 issued (and new raw sitrep 12 added)
-- README updated to give clearer insight into the decision process in how each number goes from PDF -> CSV
+- Added sitrep 14 (in reality fix some issues with sitrep 14, but those issues aborted the earlier release so this is the first release with sitrep 14 anyway
 <!-- whats-new:end -->
 
 **Embedded in the GeoJSON** — each per-zone vector output appears under `feature.properties.<dataset>.<metric>` (matrices are excluded; see below). Daily series use the latest `date` per zone in the build snapshot:
@@ -96,6 +90,7 @@ Latest release fixing a number of minor processing issues in past sitreps.
 <!-- past-releases:start -->
 | Tag | Date | Summary | Download |
 |-----|------|---------|----------|
+| [`build-2026-05-30-507a2a2`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-507a2a2) | 2026-05-30 | - Added sitrep 14 (in reality fix some issues with sitrep 14, but those issues aborted the earlier release so this is the first release with sitrep 14 anyway | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-507a2a2) |
 | [`build-2026-05-30-e125835`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-e125835) | 2026-05-30 | Latest release fixing a number of minor processing issues in past sitreps. | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-e125835) |
 | [`build-2026-05-30-5a34b18`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-5a34b18) | 2026-05-30 | An additional data folder `flowminder_short_trips/` is created. This contains updated Flowminder data for short trips for April 2026 (see report in `data/raw/` for details). QA tests show warnings in unrelated `data/**` folders. | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-5a34b18) |
 | [`build-2026-05-29-ff1e796`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-29-ff1e796) | 2026-05-29 | Sitrep 13 added. | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-29-ff1e796) |

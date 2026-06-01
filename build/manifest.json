@@ -1,8 +1,8 @@
 {
   "shapefile": "data/shapefiles/DRC_Health_zones.shp",
   "n_features": 519,
-  "built_at": "2026-05-30T13:05:37+00:00",
-  "commit": "e125835",
+  "built_at": "2026-05-30T23:54:58+00:00",
+  "commit": "2503877",
   "datasets": [
     {
       "folder": "ACLED_conflict",
@@ -374,7 +374,7 @@
           "metric": "cumulative_confirmed_cases",
           "resolution": "daily",
           "in_geojson": true,
-          "zones_with_values": 20,
+          "zones_with_values": 27,
           "long_csv": "build/long/insp_sitrep__cumulative_confirmed_cases.csv"
         },
         {
@@ -384,7 +384,7 @@
           "metric": "cumulative_confirmed_deaths",
           "resolution": "daily",
           "in_geojson": true,
-          "zones_with_values": 12,
+          "zones_with_values": 24,
           "long_csv": "build/long/insp_sitrep__cumulative_confirmed_deaths.csv"
         },
         {
@@ -414,7 +414,7 @@
           "metric": "cumulative_suspected_cases",
           "resolution": "daily",
           "in_geojson": true,
-          "zones_with_values": 20,
+          "zones_with_values": 22,
           "long_csv": "build/long/insp_sitrep__cumulative_suspected_cases.csv"
         },
         {
@@ -504,7 +504,7 @@
           "metric": "new_confirmed_cases",
           "resolution": "daily",
           "in_geojson": true,
-          "zones_with_values": 20,
+          "zones_with_values": 27,
           "long_csv": "build/long/insp_sitrep__new_confirmed_cases.csv"
         },
         {
@@ -564,7 +564,7 @@
           "metric": "new_suspected_cases",
           "resolution": "daily",
           "in_geojson": true,
-          "zones_with_values": 21,
+          "zones_with_values": 27,
           "long_csv": "build/long/insp_sitrep__new_suspected_cases.csv"
         },
         {
@@ -574,7 +574,7 @@
           "metric": "new_suspected_deaths",
           "resolution": "daily",
           "in_geojson": true,
-          "zones_with_values": 21,
+          "zones_with_values": 27,
           "long_csv": "build/long/insp_sitrep__new_suspected_deaths.csv"
         },
         {
