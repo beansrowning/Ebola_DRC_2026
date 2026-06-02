@@ -6,7 +6,7 @@
 
 This work is led by the Institut National de Recherche Biomédicale (INRB) Kinshasa/One Health Institute for Africa (INOHA) Kinshasa (Dav Ebengo, Placide Mbala-Kingebeni and Tania Bishola), and the Institut National de Santé Publique (INSP) (Pierre Akilimali, Adelard Lofungola) in collaboration with partners across the University of Oxford and Northeastern University; please contact [dav.ebengo\@umie-inrb.org](mailto:dav.ebengo@umie-inrb.org) or [pierre.akilimali\@insp.cd](mailto:pierre.akilimali@insp.cd) for further information.
 
-Last successful build: **1 June 2026, 14:23:32 (UTC)** — `build/` on `main` at commit [`0a87d65`](https://github.com/INRB-UMIE/Ebola_DRC_2026/commit/0a87d65a88c88842aca778568611103a8a3f9f79) (data snapshot [`0a87d65`](https://github.com/INRB-UMIE/Ebola_DRC_2026/commit/0a87d65), see `build/manifest.json`).
+Last successful build: **2 June 2026, 13:06:49 (UTC)** — `build/` on `main` at commit [`f3b3051`](https://github.com/INRB-UMIE/Ebola_DRC_2026/commit/f3b30516f80cd340e4d137dadbd148f4b5ce0f18) (data snapshot [`f3b3051`](https://github.com/INRB-UMIE/Ebola_DRC_2026/commit/f3b3051), see `build/manifest.json`).
 
 # Data sources
 
@@ -28,16 +28,13 @@ For the latest BDBV genomic data, please visit [Pathoplexus](https://pathoplexus
 
 We are tracking pending data sources over on the [issues tab](https://github.com/kraemer-lab/Ebola_DRC_2026/issues). If you want to request a specific publicly available dataset, raise an issue (although raising an issue does not guarantee that we will incorporate a dataset).
 
-# Current build (2026-06-01)
+# Current build (2026-06-02)
 
 The current build is committed on `main` and refreshed automatically by CI on every merge that touches `data/**` — see [Release internals](#release-internals). Run `python -m tools.build_geojson` locally only if you're working on a branch with un-merged data changes.
 
 ### What's New
 <!-- whats-new:start -->
-- National level tables now just take the nom 'DRC'
-- It's now possible to include 'Sans Fiche' and 'Zone de Sante non identifiee' in the csv files. These are excluded from the geojson build, but will be in the CSVs for anyone using them (Addressing issue #41 )
-- Dates all now normalised to ISO 8601 (Addressing issue #44 )
-- Started a detailed decision protocol for digitisation in the insp_sitrep readme to promote transparency. This is currently only part filled but for now moving on to other more urgent tasks
+Flowminder short trip data is now formatted to be visualised in the dashboard.
 <!-- whats-new:end -->
 
 **Embedded in the GeoJSON** — each per-zone vector output appears under `feature.properties.<dataset>.<metric>` (matrices are excluded; see below). Daily series use the latest `date` per zone in the build snapshot:
@@ -93,6 +90,10 @@ The current build is committed on `main` and refreshed automatically by CI on ev
 <!-- past-releases:start -->
 | Tag | Date | Summary | Download |
 |-----|------|---------|----------|
+| [`build-2026-06-02-f3b3051`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-02-f3b3051) | 2026-06-02 | Flowminder short trip data is now formatted to be visualised in the dashboard. | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-02-f3b3051) |
+| [`build-2026-06-02-125e4e0`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-02-125e4e0) | 2026-06-02 | Report added for Sitrep 17 describing digitisation process | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-02-125e4e0) |
+| [`build-2026-06-02-d1ceb9c`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-02-d1ceb9c) | 2026-06-02 | Sitrep 17 Added | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-02-d1ceb9c) |
+| [`build-2026-06-01-b4cafc9`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-01-b4cafc9) | 2026-06-01 | Updates to SitReps 15 and 16 | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-01-b4cafc9) |
 | [`build-2026-06-01-0a87d65`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-01-0a87d65) | 2026-06-01 | - National level tables now just take the nom 'DRC' | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-06-01-0a87d65) |
 | [`build-2026-05-30-507a2a2`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-507a2a2) | 2026-05-30 | - Added sitrep 14 (in reality fix some issues with sitrep 14, but those issues aborted the earlier release so this is the first release with sitrep 14 anyway | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-507a2a2) |
 | [`build-2026-05-30-e125835`](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-e125835) | 2026-05-30 | Latest release fixing a number of minor processing issues in past sitreps. | [release](https://github.com/INRB-UMIE/Ebola_DRC_2026/releases/tag/build-2026-05-30-e125835) |
@@ -231,8 +232,9 @@ What it does, in order:
 5.  Runs `python -m tools.release --description-file <tmp> --non-interactive`, which packs `build/` as `dist/<tag>.tar.gz`, persists the description as `dist/<tag>.description.md`, and updates the README. This step does NOT publish anything.
 6.  Commits and pushes the resulting `build/`, `qa/`, and `README.md` back to `main` with `[skip release][skip ci]` in the commit message to prevent recursive triggering.
 7.  Runs `python -m tools.publish`, which calls `gh release create <tag> dist/<tag>.tar.gz --target $(git rev-parse HEAD) ...`. Because this runs *after* the commit-back, the release tag points at the commit that contains the build artifacts in its tree — not at the pre-build merge commit. The release URL is determined by `<tag>` and matches what `tools.release` wrote into the README in step 5.
+8.  Dispatches a dashboard rebuild to `BDBV2026-Epidemic_Dashboard` on `main`, using the commit SHA from step 6 (the build-artifact commit). Requires `DASHBOARD_DISPATCH_TOKEN` on this repo; skips with a warning if unset.
 
-The pre-existing `qa.yml` workflow runs `pytest` + `tools.qa` on PRs as the merge gate; it does not trigger on `build/`, `qa/`, or `README.md` changes, so the release workflow's commit-back does not retrigger it.
+The pre-existing `qa.yml` workflow runs `pytest` + `tools.qa` on PRs as the merge gate; it does not trigger on `build/`, `qa/`, or `README.md` changes, so the release workflow's commit-back does not retrigger it. The separate *Trigger dashboard rebuild* workflow is manual-only (escape hatch); production dashboard updates come from step 8 above.
 
 # Citation
 

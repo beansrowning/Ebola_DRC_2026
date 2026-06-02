@@ -1,5 +1,5 @@
-# Notify the epidemic dashboard repo to rebuild after data/build updates.
-# For production, release.yml also dispatches after a successful data release on main.
+# Manual escape hatch: dispatch a dashboard rebuild without running a full data release.
+# Production path: release.yml dispatches after a successful release on main.
 
 name: Trigger dashboard rebuild
 
@@ -9,17 +9,10 @@ on:
       dashboard_branch:
         description: "Dashboard repo branch to rebuild"
         required: false
-        default: "automate_dashboard_deployment"
+        default: "main"
       data_ref:
-        description: "Data repo ref passed to the dashboard build (default: this ref)"
+        description: "BDBV2026-Data git ref passed to the dashboard build (default: main)"
         required: false
-  push:
-    branches:
-      - main
-      - automate_dashboard_deployment
-    paths:
-      - "build/**"
-      - "data/**"
 
 jobs:
   dispatch:
@@ -28,7 +21,7 @@ jobs:
       - name: Trigger dashboard workflow
         env:
           GH_TOKEN: ${{ secrets.DASHBOARD_DISPATCH_TOKEN }}
-          DASHBOARD_REPO: INRB-UMIE/EBOV2026_Epidemic_Dashboard
+          DASHBOARD_REPO: INRB-UMIE/BDBV2026-Epidemic_Dashboard
         run: |
           set -euo pipefail
           if [ -z "${GH_TOKEN}" ]; then
@@ -37,11 +30,11 @@ jobs:
           fi
           BRANCH="${{ github.event.inputs.dashboard_branch }}"
           if [ -z "${BRANCH}" ]; then
-            BRANCH="automate_dashboard_deployment"
+            BRANCH="main"
           fi
           DATA_REF="${{ github.event.inputs.data_ref }}"
           if [ -z "${DATA_REF}" ]; then
-            DATA_REF="${{ github.ref_name }}"
+            DATA_REF="main"
           fi
           echo "Dispatching data-updated to ${DASHBOARD_REPO}"
           echo "  dashboard_branch=${BRANCH}  data_ref=${DATA_REF}"
