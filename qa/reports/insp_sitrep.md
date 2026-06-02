@@ -1,8 +1,8 @@
 # QA report: insp_sitrep
 
-_Checked: 2026-06-01T14:23:30+00:00_
+_Checked: 2026-06-02T13:06:48+00:00_
 
-**Status counts:** {'pass': 29}
+**Status counts:** {'pass': 31}
 
 ## `metadata.yaml` (metadata) — **pass**
 
@@ -12,12 +12,12 @@ _Checked: 2026-06-01T14:23:30+00:00_
 - resolution: daily
 
 ## `insp_sitrep__cumulative_confirmed_cases__daily.csv` (vector) — **pass**
-- rows: 153
-- zones covered: 27 / 519
+- rows: 203
+- zones covered: 28 / 519
 - resolution: daily
 
 ## `insp_sitrep__cumulative_confirmed_deaths__daily.csv` (vector) — **pass**
-- rows: 129
+- rows: 177
 - zones covered: 24 / 519
 - resolution: daily
 
@@ -27,52 +27,62 @@ _Checked: 2026-06-01T14:23:30+00:00_
 - resolution: daily
 
 ## `insp_sitrep__cumulative_contacts_traced__daily.csv` (vector) — **pass**
-- rows: 92
+- rows: 131
 - zones covered: 15 / 519
 - resolution: daily
 
 ## `insp_sitrep__cumulative_suspected_cases__daily.csv` (vector) — **pass**
-- rows: 147
+- rows: 189
 - zones covered: 22 / 519
 - resolution: daily
 
 ## `insp_sitrep__cumulative_suspected_deaths__daily.csv` (vector) — **pass**
-- rows: 147
+- rows: 187
 - zones covered: 20 / 519
 - resolution: daily
 
 ## `insp_sitrep__hosp_escaped__daily.csv` (vector) — **pass**
-- rows: 28
+- rows: 40
 - zones covered: 6 / 519
 - resolution: daily
 
 ## `insp_sitrep__hospitalised__daily.csv` (vector) — **pass**
-- rows: 23
+- rows: 35
 - zones covered: 6 / 519
 - resolution: daily
 
 ## `insp_sitrep__in_bed_previous_day__daily.csv` (vector) — **pass**
-- rows: 23
+- rows: 35
 - zones covered: 6 / 519
 - resolution: daily
 
 ## `insp_sitrep__national_cumulative_confirmed_cases__daily.csv` (vector) — **pass**
-- rows: 13
+- rows: 16
 - zones covered: 1 / 519
 - resolution: daily
 
 ## `insp_sitrep__national_cumulative_confirmed_deaths__daily.csv` (vector) — **pass**
-- rows: 13
+- rows: 16
 - zones covered: 1 / 519
 - resolution: daily
 
 ## `insp_sitrep__national_cumulative_suspected_cases__daily.csv` (vector) — **pass**
-- rows: 13
+- rows: 16
 - zones covered: 1 / 519
 - resolution: daily
 
 ## `insp_sitrep__national_cumulative_suspected_deaths__daily.csv` (vector) — **pass**
-- rows: 13
+- rows: 15
+- zones covered: 1 / 519
+- resolution: daily
+
+## `insp_sitrep__national_suspected_cases_in_isolation__daily.csv` (vector) — **pass**
+- rows: 2
+- zones covered: 1 / 519
+- resolution: daily
+
+## `insp_sitrep__national_suspected_cases_under_investigation__daily.csv` (vector) — **pass**
+- rows: 2
 - zones covered: 1 / 519
 - resolution: daily
 
@@ -87,8 +97,8 @@ _Checked: 2026-06-01T14:23:30+00:00_
 - resolution: daily
 
 ## `insp_sitrep__new_contacts_listed__daily.csv` (vector) — **pass**
-- rows: 92
-- zones covered: 15 / 519
+- rows: 136
+- zones covered: 20 / 519
 - resolution: daily
 
 ## `insp_sitrep__new_hosp_admissions__daily.csv` (vector) — **pass**
@@ -97,7 +107,7 @@ _Checked: 2026-06-01T14:23:30+00:00_
 - resolution: daily
 
 ## `insp_sitrep__new_hosp_detainees__daily.csv` (vector) — **pass**
-- rows: 28
+- rows: 40
 - zones covered: 6 / 519
 - resolution: daily
 
