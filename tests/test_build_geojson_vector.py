@@ -23,7 +23,7 @@ def test_attach_vector_ignores_empty_header(tmp_path, monkeypatch):
 
     feature = {"properties": {}}
     attached = build_geojson._attach_vector(
-        folder,
+        processed / "example__metric__static.csv",
         "example__metric__static.csv",
         SimpleNamespace(dataset="example", metric="metric"),
         {"Rwampara": feature},
@@ -58,7 +58,7 @@ def test_attach_vector_skips_non_geographic_nom(tmp_path, monkeypatch):
 
     bunia_feat = {"properties": {}}
     attached = build_geojson._attach_vector(
-        folder,
+        processed / "insp_sitrep__metric__daily.csv",
         "insp_sitrep__metric__daily.csv",
         SimpleNamespace(dataset="insp_sitrep", metric="metric"),
         {"Bunia": bunia_feat},
@@ -91,7 +91,7 @@ def test_attach_vector_broadcasts_drc_to_all_zones(tmp_path, monkeypatch):
     bunia = {"properties": {}}
     goma = {"properties": {}}
     attached = build_geojson._attach_vector(
-        folder,
+        processed / "insp_sitrep__national_cumulative_confirmed_cases__daily.csv",
         "insp_sitrep__national_cumulative_confirmed_cases__daily.csv",
         __import__("types").SimpleNamespace(
             dataset="insp_sitrep",
@@ -105,3 +105,125 @@ def test_attach_vector_broadcasts_drc_to_all_zones(tmp_path, monkeypatch):
         val = feat["properties"]["insp_sitrep"]["national_cumulative_confirmed_cases"]
         assert val["national_cumulative_confirmed_cases"] == 121
         assert val["_date"] == "2026-05-24"
+
+
+def test_attach_vector_header_only_placeholder(tmp_path, monkeypatch):
+    folder = tmp_path / "public_health_response"
+    processed = folder / "processed"
+    long_dir = tmp_path / "long"
+    processed.mkdir(parents=True)
+
+    with open(
+        processed / "public_health_response__national_epidemiological_laboratory__daily.csv",
+        "w",
+        encoding="utf-8",
+    ) as fp:
+        fp.write("nom,date,national_laboratory\n")
+
+    monkeypatch.setattr(build_geojson, "LONG_DIR", long_dir)
+
+    attached = build_geojson._attach_vector(
+        processed / "public_health_response__national_epidemiological_laboratory__daily.csv",
+        "public_health_response__national_epidemiological_laboratory__daily.csv",
+        SimpleNamespace(
+            dataset="public_health_response",
+            metric="national_epidemiological_laboratory",
+        ),
+        {"Bunia": {"properties": {}}},
+    )
+
+    assert attached == 0
+    with open(
+        long_dir / "public_health_response__national_epidemiological_laboratory.csv",
+        newline="",
+        encoding="utf-8-sig",
+    ) as fp:
+        reader = csv.DictReader(fp)
+        assert reader.fieldnames == ["nom", "date", "national_laboratory"]
+        assert list(reader) == []
+
+
+def test_attach_vector_broadcasts_province_to_zones_in_province(tmp_path, monkeypatch):
+    folder = tmp_path / "public_health_response"
+    processed = folder / "processed"
+    long_dir = tmp_path / "long"
+    processed.mkdir(parents=True)
+
+    with open(
+        processed / "public_health_response__provincial_epidemiological_coordination__daily.csv",
+        "w",
+        encoding="utf-8",
+    ) as fp:
+        fp.write(
+            "nom,date,provincial_coordination\n"
+            "Ituri,2026-06-05,older\n"
+            "Ituri,2026-06-06,latest ituri\n"
+            "North-Kivu,2026-06-06,latest nord-kivu\n"
+        )
+
+    monkeypatch.setattr(build_geojson, "LONG_DIR", long_dir)
+
+    bunia = {"properties": {}}
+    beni = {"properties": {}}
+    attached = build_geojson._attach_vector(
+        processed / "public_health_response__provincial_epidemiological_coordination__daily.csv",
+        "public_health_response__provincial_epidemiological_coordination__daily.csv",
+        SimpleNamespace(
+            dataset="public_health_response",
+            metric="provincial_epidemiological_coordination",
+        ),
+        {"Bunia": bunia, "Beni": beni},
+    )
+
+    assert attached == 2
+    bunia_val = bunia["properties"]["public_health_response"][
+        "provincial_epidemiological_coordination"
+    ]
+    beni_val = beni["properties"]["public_health_response"][
+        "provincial_epidemiological_coordination"
+    ]
+    assert bunia_val["provincial_coordination"] == "latest ituri"
+    assert bunia_val["_date"] == "2026-06-06"
+    assert beni_val["provincial_coordination"] == "latest nord-kivu"
+    assert beni_val["_date"] == "2026-06-06"
+
+
+def test_attach_vector_resolves_language_variants(tmp_path, monkeypatch):
+    folder = tmp_path / "public_health_response"
+    processed = folder / "processed"
+    long_dir = tmp_path / "long"
+    processed.mkdir(parents=True)
+
+    with open(
+        processed / "public_health_response__epidemiological_community_engagement_en__daily.csv",
+        "w",
+        encoding="utf-8",
+    ) as fp:
+        fp.write("nom,date,community_engagement_en\nBunia,2026-06-06,en value\n")
+    with open(
+        processed / "public_health_response__epidemiological_community_engagement_fr__daily.csv",
+        "w",
+        encoding="utf-8",
+    ) as fp:
+        fp.write("nom,date,community_engagement_fr\nBunia,2026-06-06,fr value\n")
+
+    monkeypatch.setattr(build_geojson, "LONG_DIR", long_dir)
+
+    bunia = {"properties": {}}
+    for suffix in ("en", "fr"):
+        src = processed / (
+            f"public_health_response__epidemiological_community_engagement_{suffix}__daily.csv"
+        )
+        build_geojson._attach_vector(
+            src,
+            src.name,
+            SimpleNamespace(
+                dataset="public_health_response",
+                metric=f"epidemiological_community_engagement_{suffix}",
+            ),
+            {"Bunia": bunia},
+        )
+
+    phr = bunia["properties"]["public_health_response"]
+    assert phr["epidemiological_community_engagement_en"]["community_engagement_en"] == "en value"
+    assert phr["epidemiological_community_engagement_fr"]["community_engagement_fr"] == "fr value"

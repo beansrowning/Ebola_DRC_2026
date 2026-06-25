@@ -103,6 +103,28 @@ Occasionally, health zone level data may be sent directly from INSP to INRB. Thi
 | `SitRep_MVE_014_2026.pdf` | 014    |
 | `SitRep_MVE_015_2026.pdf` | 015    |
 | `SitRep_MVE_016_2026.pdf` | 016    |
+| `SitRep_MVE_017_2026.pdf` | 017    |
+| `SitRep_MVE_018_2026.pdf` | 018    |
+| `SitRep_MVE_019_2026.pdf` | 019    |
+| `SitRep_MVE_020_2026.pdf` | 020    |
+| `SitRep_MVE_021_2026.pdf` | 021    |
+| `SitRep_MVE_022_2026.pdf` | 022    |
+| `SitRep_MVE_023_2026.pdf` | 023    |
+| `SitRep_MVE_024_2026.pdf` | 024    |
+| `SitRep_MVE_025_2026.pdf` | 025    |
+| `SitRep_MVE_026_2026.pdf` | 026    |
+| `SitRep_MVE_027_2026.pdf` | 027    |
+| `SitRep_MVE_029_2026.pdf` | 029    |
+| `SitRep_MVE_030_2026.pdf` | 030    |
+| `SitRep_MVE_031_2026.pdf` | 031    |
+| `SitRep_MVE_032_2026.pdf` | 032    |
+| `SitRep_MVE_033_2026.pdf` | 033    |
+| `SitRep_MVE_034_2026.pdf` | 034    |
+| `SitRep_MVE_035_2026.pdf` | 035    |
+| `SitRep_MVE_036_2026.pdf` | 036    |
+| `SitRep_MVE_037_2026.pdf` | 037    |
+| `SitRep_MVE_038_2026.pdf` | 038    |
+| `SitRep_MVE_039_2026.pdf` | 039    |
 
 **Not in repo:** `SitRep_MVE_003-2026.pdf` (gap between 002 and 004).
 

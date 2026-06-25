@@ -171,6 +171,16 @@ Copy this file for each sitrep (e.g. `SitRep_MVE_015-2026.md`) and record any no
 
 ---
 
+## insp_sitrep__national_cumulative_recovered_cases__daily
+
+**Updated this sitrep?** ☐ Yes · ☐ No
+
+**Decisions / notes:**
+
+
+
+---
+
 ## insp_sitrep__new_confirmed_cases__daily.csv
 
 **Updated this sitrep?** ☐ Yes · ☐ No

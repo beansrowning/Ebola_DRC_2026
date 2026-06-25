@@ -51,9 +51,12 @@ from tools.lib.schema import (
     REPO_ROOT,
     SHAPEFILE,
     is_non_geographic_nom,
+    is_province_rollup_nom,
     load_zones,
     parse_filename,
+    resolve_processed_paths,
     resolve_vector_nom,
+    zones_by_province,
 )
 
 README = REPO_ROOT / "README.md"
@@ -119,13 +122,29 @@ def _load_features() -> tuple[list[dict], dict[str, dict]]:
     return features, by_nom
 
 
-def _attach_vector(folder: Path, file_name: str, parsed, features_by_nom: dict[str, dict]) -> int:
-    src = folder / "processed" / file_name
+def _attach_vector(
+    src: Path,
+    file_name: str,
+    parsed,
+    features_by_nom: dict[str, dict],
+) -> int:
     with src.open(newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
-        rows = [{k: v for k,v in row.items() if k != ""} for row in reader]
-    
-    fieldnames = list(rows[0].keys())
+        fieldnames = [k for k in (reader.fieldnames or []) if k != ""]
+        rows = [{k: v for k, v in row.items() if k != ""} for row in reader]
+
+    dataset_token = parsed.dataset
+    metric = parsed.metric
+
+    # Header-only placeholders pass QA but carry no attachable values yet.
+    if not rows:
+        LONG_DIR.mkdir(parents=True, exist_ok=True)
+        dst = LONG_DIR / f"{dataset_token}__{metric}.csv"
+        with dst.open("w", encoding="utf-8-sig") as fp:
+            writer = csv.DictWriter(fp, fieldnames=fieldnames)
+            writer.writeheader()
+        return 0
+
     date_col = next((c for c in DATE_COLUMN_CANDIDATES if c in fieldnames), None)
     value_cols = [c for c in fieldnames if c and c != "nom" and c != date_col]
 
@@ -145,8 +164,6 @@ def _attach_vector(folder: Path, file_name: str, parsed, features_by_nom: dict[s
         else:
             latest_per_nom[canonical] = r
 
-    dataset_token = parsed.dataset
-    metric = parsed.metric
     attached = 0
 
     def _apply_row(nom: str, r: dict) -> None:
@@ -162,8 +179,22 @@ def _attach_vector(folder: Path, file_name: str, parsed, features_by_nom: dict[s
         attached += 1
 
     national_row = latest_per_nom.pop(NATIONAL_ROLLUP_NOM, None)
+    province_rows: dict[str, dict] = {}
+    zone_rows: dict[str, dict] = {}
     for nom, r in latest_per_nom.items():
+        if is_province_rollup_nom(nom):
+            province_rows[nom] = r
+        else:
+            zone_rows[nom] = r
+
+    for nom, r in zone_rows.items():
         _apply_row(nom, r)
+
+    by_province = zones_by_province()
+    for prov, r in province_rows.items():
+        for zone_nom in by_province.get(prov, []):
+            _apply_row(zone_nom, r)
+
     if national_row is not None:
         value_obj = {c: _coerce(national_row[c]) for c in value_cols}
         if date_col:
@@ -318,9 +349,22 @@ def main(argv: list[str] | None = None) -> int:
         if parsed is None:
             continue
         folder = DATA_DIR / row["dataset"]
-        count = _attach_vector(folder, row["file"], parsed, features_by_nom)
-        attached_counts[(row["dataset"], row["file"])] = count
-        print(f"attached {row['file']}: {count} zones")
+        resolved = resolve_processed_paths(folder, row["file"])
+        if not resolved:
+            print(
+                f"skip {row['file']}: no matching processed file "
+                f"(checked language variants)",
+                file=sys.stderr,
+            )
+            continue
+        total = 0
+        for src, resolved_name in resolved:
+            resolved_parsed = parse_filename(resolved_name) or parsed
+            count = _attach_vector(src, resolved_name, resolved_parsed, features_by_nom)
+            attached_counts[(row["dataset"], resolved_name)] = count
+            total += count
+            print(f"attached {resolved_name}: {count} zones")
+        attached_counts[(row["dataset"], row["file"])] = total
 
     BUILD_DIR.mkdir(exist_ok=True)
     geo = {"type": "FeatureCollection", "features": features}

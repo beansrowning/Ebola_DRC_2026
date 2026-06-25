@@ -8,12 +8,20 @@ from tools.lib.schema import (
     NATIONAL_ROLLUP_NOM,
     NON_GEOGRAPHIC_NOMS,
     VALID_RESOLUTIONS,
+    build_processed_filename,
     canonical_noms,
+    canonical_provinces,
     is_non_geographic_nom,
+    is_province_rollup_nom,
+    language_variant_filenames,
     load_zones,
     parse_filename,
+    resolve_processed_paths,
     resolve_vector_nom,
+    split_language_suffix,
     to_canonical,
+    to_canonical_province,
+    zones_by_province,
     zscode_to_canonical,
 )
 
@@ -77,6 +85,34 @@ def test_non_geographic_noms():
     assert resolve_vector_nom("NotAZone") is None
 
 
+def test_canonical_provinces_from_shapefile():
+    provinces = canonical_provinces()
+    assert len(provinces) == 26
+    assert "Ituri" in provinces
+    assert "Nord-Kivu" in provinces
+    assert "Sud-Kivu" in provinces
+
+
+def test_to_canonical_province_and_aliases():
+    assert to_canonical_province("Ituri") == "Ituri"
+    assert to_canonical_province("North-Kivu") == "Nord-Kivu"
+    assert to_canonical_province("North Kivu") == "Nord-Kivu"
+    assert to_canonical_province("South-Kivu") == "Sud-Kivu"
+    assert to_canonical_province("Fake Province") is None
+
+
+def test_resolve_vector_nom_province_before_zone():
+    assert resolve_vector_nom("North-Kivu") == "Nord-Kivu"
+    assert is_province_rollup_nom("Nord-Kivu")
+    assert not is_province_rollup_nom("North-Kivu")
+
+
+def test_zones_by_province_includes_bunia_in_ituri():
+    ituri = zones_by_province()["Ituri"]
+    assert "Bunia" in ituri
+    assert "Beni" in zones_by_province()["Nord-Kivu"]
+
+
 def test_zscode_to_canonical_known_and_unknown():
     # Bunia's authoritative ZSCode in the current shapefile.
     assert zscode_to_canonical("CD5402ZS02") == "Bunia"
@@ -125,3 +161,64 @@ def test_valid_resolutions_match_filename_pattern():
     # Sanity: every resolution we declare should parse.
     for res in VALID_RESOLUTIONS:
         assert parse_filename(f"d__m__{res}.csv") is not None
+
+
+def test_split_language_suffix():
+    assert split_language_suffix("epidemiological_coordination_en") == (
+        "epidemiological_coordination",
+        "en",
+    )
+    assert split_language_suffix("epidemiological_coordination") == (
+        "epidemiological_coordination",
+        None,
+    )
+
+
+def test_language_variant_filenames():
+    logical = "public_health_response__epidemiological_community_engagement__daily.csv"
+    variants = language_variant_filenames(logical)
+    assert variants == [
+        build_processed_filename(
+            "public_health_response",
+            "epidemiological_community_engagement",
+            "daily",
+            language="en",
+        ),
+        build_processed_filename(
+            "public_health_response",
+            "epidemiological_community_engagement",
+            "daily",
+            language="fr",
+        ),
+    ]
+    suffixed = (
+        "public_health_response__epidemiological_community_engagement_en__daily.csv"
+    )
+    assert language_variant_filenames(suffixed) == []
+
+
+def test_resolve_processed_paths_language_variants(tmp_path):
+    folder = tmp_path / "public_health_response"
+    processed = folder / "processed"
+    processed.mkdir(parents=True)
+    en = build_processed_filename(
+        "public_health_response",
+        "epidemiological_community_engagement",
+        "daily",
+        language="en",
+    )
+    fr = build_processed_filename(
+        "public_health_response",
+        "epidemiological_community_engagement",
+        "daily",
+        language="fr",
+    )
+    (processed / en).write_text("nom,date,community_engagement_en\n", encoding="utf-8")
+    (processed / fr).write_text("nom,date,community_engagement_fr\n", encoding="utf-8")
+
+    logical = "public_health_response__epidemiological_community_engagement__daily.csv"
+    resolved = resolve_processed_paths(folder, logical)
+    assert [name for _, name in resolved] == [en, fr]
+
+    exact = resolve_processed_paths(folder, en)
+    assert [name for _, name in exact] == [en]
